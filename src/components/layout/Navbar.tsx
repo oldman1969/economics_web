@@ -16,7 +16,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 text-xl font-bold text-gray-900 no-underline">
               <span className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">经</span>
-              经济与投资
+              Economics & Investing
             </Link>
           </div>
 

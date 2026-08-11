@@ -7,7 +7,7 @@ export default function Home() {
       {/* Hero */}
       <div className="text-center mb-16">
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-          经济与投资学习平台
+          Economics & Investing
         </h1>
         <p className="text-lg text-gray-500 max-w-2xl mx-auto">
           从理解经济运行规律开始，逐步掌握股票投资的技能。
