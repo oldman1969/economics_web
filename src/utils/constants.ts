@@ -17,7 +17,7 @@ export const NAV_ITEMS = [
   },
 ] as const;
 
-export const ECONOMIC_MACHINE_VIDEO_ID = 'PHe0bXAIuk0';
+export const ECONOMIC_MACHINE_VIDEO_BVID = 'BV1kx41117mE';
 
 export const ECONOMIC_KEY_POINTS = [
   {

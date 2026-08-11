@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ECONOMIC_MACHINE_VIDEO_ID, ECONOMIC_KEY_POINTS } from '@/utils/constants';
-import { ChevronDown, ChevronUp, Video } from 'lucide-react';
+import { ECONOMIC_MACHINE_VIDEO_BVID, ECONOMIC_KEY_POINTS } from '@/utils/constants';
+import { ChevronDown, ChevronUp, Tv } from 'lucide-react';
 
 export default function EconomicMachine() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
@@ -21,9 +21,10 @@ export default function EconomicMachine() {
       <div className="card mb-10 overflow-hidden p-0">
         <div className="aspect-video bg-black">
           <iframe
-            src={`https://www.youtube.com/embed/${ECONOMIC_MACHINE_VIDEO_ID}`}
-            title="How The Economic Machine Works"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            src={`//player.bilibili.com/player.html?bvid=${ECONOMIC_MACHINE_VIDEO_BVID}&page=1&high_quality=1`}
+            title="经济机器是怎样运行的 — Ray Dalio"
+            scrolling="no"
+            frameBorder="no"
             allowFullScreen
             className="w-full h-full"
           />
@@ -65,9 +66,9 @@ export default function EconomicMachine() {
 
       {/* Attribution */}
       <div className="mt-8 flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-        <Video size={20} className="text-red-500 flex-shrink-0" />
+        <Tv size={20} className="text-blue-500 flex-shrink-0" />
         <p className="text-sm text-gray-500">
-          视频来源：Bridgewater Associates（桥水基金）。本页面仅用于教育学习目的。
+          视频来源：Bilibili。原片由 Bridgewater Associates（桥水基金）制作。本页面仅用于教育学习目的。
         </p>
       </div>
     </div>
