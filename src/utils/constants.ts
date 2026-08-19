@@ -2,6 +2,24 @@ import type { MarketScope } from '@/types';
 
 export const NAV_ITEMS = [
   { label: '首页', path: '/' },
+  {
+    label: '学习',
+    children: [
+      { label: '认识经济', path: '/economics' },
+      { label: '认识公司', path: '/investing/company-essence' },
+      { label: '认识市场', path: '/investing/market-essence' },
+      { label: '认识自己', path: '/investing/self-essence' },
+      { label: '炒股入门教程', path: '/investing/beginner-guide' },
+    ],
+  },
+  {
+    label: '工具',
+    children: [
+      { label: '股票实时查询', path: '/investing/stock-query' },
+      { label: '智能选股', path: '/investing/stock-screener' },
+      { label: 'AI 分析', path: '/investing/stock-advice' },
+    ],
+  },
 ] as const;
 
 export const ECONOMIC_MACHINE_VIDEO_BVID = 'BV1kx41117mE';
