@@ -157,3 +157,16 @@ export interface ScreenerResultItem extends StockListItem {
     wr: boolean;
   };
 }
+
+/** AI 配置（OpenAI 兼容接口） */
+export interface AiConfig {
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+}
+
+/** 聊天消息 */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
