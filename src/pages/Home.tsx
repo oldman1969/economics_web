@@ -25,7 +25,7 @@ const LEVELS = [
     card: 'border-green-200 bg-green-50/60 hover:border-green-300',
     iconBg: 'bg-green-100 text-green-600',
     text: 'text-green-700',
-    to: '/investing/beginner-guide',
+    to: '/investing/company-essence',
   },
   {
     level: '第三层',
