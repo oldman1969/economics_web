@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import * as echarts from 'echarts';
 import { useStockData } from '@/hooks/useStockData';
 import type { StockSearchItem } from '@/types';
@@ -8,6 +9,7 @@ const FAVORITES_KEY = 'stock_favorites';
 
 export default function StockQuery() {
   const { stockInfo, klines, loading, error, loadStock, search } = useStockData();
+  const [searchParams] = useSearchParams();
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<StockSearchItem[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -27,6 +29,16 @@ export default function StockQuery() {
   useEffect(() => {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   }, [favorites]);
+
+  // Preload stock from URL ?code=xxx
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code && /^\d{6}$/.test(code)) {
+      setKeyword(code);
+      loadStock(code);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const toggleFavorite = (code: string) => {
     setFavorites((prev) =>
@@ -57,6 +69,23 @@ export default function StockQuery() {
     setKeyword(`${item.name} (${item.code})`);
     setShowResults(false);
     loadStock(item.code);
+  };
+
+  // Enter key: select first result, or load by code directly
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    // 有搜索结果 → 选第一个
+    if (searchResults.length > 0) {
+      selectStock(searchResults[0]);
+      return;
+    }
+    // 否则如果输入是 6 位数字代码 → 直接查询
+    const trimmed = keyword.trim();
+    if (/^\d{6}$/.test(trimmed)) {
+      loadStock(trimmed);
+      setShowResults(false);
+    }
   };
 
   // Chart
@@ -153,6 +182,7 @@ export default function StockQuery() {
             type="text"
             value={keyword}
             onChange={(e) => onSearchChange(e.target.value)}
+            onKeyDown={onKeyDown}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
             placeholder="输入股票代码或名称，如 600519 或 贵州茅台"

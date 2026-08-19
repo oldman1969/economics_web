@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Search, Lightbulb, ArrowRight } from 'lucide-react';
+import { BookOpen, Search, Filter, Lightbulb, ArrowRight } from 'lucide-react';
 
 export default function InvestingHome() {
   const modules = [
@@ -17,6 +17,14 @@ export default function InvestingHome() {
       icon: <Search size={24} />,
       color: 'bg-green-100 text-green-600',
       to: '/investing/stock-query',
+      available: true,
+    },
+    {
+      title: '智能选股',
+      desc: '按基本面、技术面等条件筛选 A 股，支持保存分组一键复用，快速找到符合你标准的股票。',
+      icon: <Filter size={24} />,
+      color: 'bg-orange-100 text-orange-600',
+      to: '/investing/stock-screener',
       available: true,
     },
     {
