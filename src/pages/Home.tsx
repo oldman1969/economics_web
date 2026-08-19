@@ -36,7 +36,7 @@ const LEVELS = [
     card: 'border-orange-200 bg-orange-50/60 hover:border-orange-300',
     iconBg: 'bg-orange-100 text-orange-600',
     text: 'text-orange-700',
-    to: '/investing/beginner-guide',
+    to: '/investing/market-essence',
   },
   {
     level: '第四层',
@@ -47,7 +47,7 @@ const LEVELS = [
     card: 'border-purple-200 bg-purple-50/60 hover:border-purple-300',
     iconBg: 'bg-purple-100 text-purple-600',
     text: 'text-purple-700',
-    to: '/investing/beginner-guide',
+    to: '/investing/self-essence',
   },
 ];
 

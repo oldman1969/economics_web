@@ -2,15 +2,23 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { ECONOMIC_ARTICLES } from '@/utils/economics';
 import { COMPANY_ARTICLES } from '@/utils/company';
+import { MARKET_ARTICLES } from '@/utils/market';
+import { SELF_ARTICLES } from '@/utils/self';
 import { renderMarkdown } from '@/utils/markdown';
+
+const SOURCES = [
+  { articles: ECONOMIC_ARTICLES, backTo: '/economics', backLabel: '返回经济学' },
+  { articles: COMPANY_ARTICLES, backTo: '/investing/company-essence', backLabel: '返回公司的本质' },
+  { articles: MARKET_ARTICLES, backTo: '/investing/market-essence', backLabel: '返回认识市场' },
+  { articles: SELF_ARTICLES, backTo: '/investing/self-essence', backLabel: '返回认识自己' },
+];
 
 export default function ArticlePage() {
   const { id } = useParams<{ id: string }>();
-  const isCompany = COMPANY_ARTICLES.some((a) => a.id === id);
-  const articles = isCompany ? COMPANY_ARTICLES : ECONOMIC_ARTICLES;
-  const article = articles.find((a) => a.id === id);
-  const backTo = isCompany ? '/investing/company-essence' : '/economics';
-  const backLabel = isCompany ? '返回公司的本质' : '返回经济学';
+  const source = SOURCES.find((s) => s.articles.some((a) => a.id === id));
+  const article = source?.articles.find((a) => a.id === id);
+  const backTo = source?.backTo ?? '/economics';
+  const backLabel = source?.backLabel ?? '返回';
 
   if (!article) {
     return (

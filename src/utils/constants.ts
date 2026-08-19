@@ -19,6 +19,8 @@ export const NAV_ITEMS = [
     children: [
       { label: '投资首页', path: '/investing' },
       { label: '公司的本质', path: '/investing/company-essence' },
+      { label: '认识市场', path: '/investing/market-essence' },
+      { label: '认识自己', path: '/investing/self-essence' },
       { label: '炒股入门教程', path: '/investing/beginner-guide' },
       { label: '股票实时查询', path: '/investing/stock-query' },
       { label: '智能选股', path: '/investing/stock-screener' },
