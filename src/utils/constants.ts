@@ -2,31 +2,6 @@ import type { MarketScope } from '@/types';
 
 export const NAV_ITEMS = [
   { label: '首页', path: '/' },
-  {
-    label: '经济学',
-    children: [
-      { label: '经济学首页', path: '/economics' },
-      { label: '经济机器是怎样运行的', path: '/economics/economic-machine' },
-      { label: '信贷与债务', path: '/economics/article/credit-debt' },
-      { label: '央行与利率', path: '/economics/article/central-bank' },
-      { label: '经济周期', path: '/economics/article/economic-cycle' },
-      { label: '通胀与通缩', path: '/economics/article/inflation-deflation' },
-      { label: '经济周期与股市', path: '/economics/article/economy-to-stock' },
-    ],
-  },
-  {
-    label: '投资',
-    children: [
-      { label: '投资首页', path: '/investing' },
-      { label: '公司的本质', path: '/investing/company-essence' },
-      { label: '认识市场', path: '/investing/market-essence' },
-      { label: '认识自己', path: '/investing/self-essence' },
-      { label: '炒股入门教程', path: '/investing/beginner-guide' },
-      { label: '股票实时查询', path: '/investing/stock-query' },
-      { label: '智能选股', path: '/investing/stock-screener' },
-      { label: '投资建议', path: '/investing/stock-advice' },
-    ],
-  },
 ] as const;
 
 export const ECONOMIC_MACHINE_VIDEO_BVID = 'BV1kx41117mE';
