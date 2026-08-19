@@ -59,6 +59,23 @@ export default function StockQuery() {
     loadStock(item.code);
   };
 
+  // Enter key: select first result, or load by code directly
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    // 有搜索结果 → 选第一个
+    if (searchResults.length > 0) {
+      selectStock(searchResults[0]);
+      return;
+    }
+    // 否则如果输入是 6 位数字代码 → 直接查询
+    const trimmed = keyword.trim();
+    if (/^\d{6}$/.test(trimmed)) {
+      loadStock(trimmed);
+      setShowResults(false);
+    }
+  };
+
   // Chart
   useEffect(() => {
     if (!chartRef.current || klines.length === 0) return;
@@ -153,6 +170,7 @@ export default function StockQuery() {
             type="text"
             value={keyword}
             onChange={(e) => onSearchChange(e.target.value)}
+            onKeyDown={onKeyDown}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
             placeholder="输入股票代码或名称，如 600519 或 贵州茅台"

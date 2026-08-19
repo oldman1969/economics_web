@@ -21,7 +21,8 @@ function jsonp<T>(url: string, timeout = 8000): Promise<T> {
       resolve(data);
     };
 
-    script.src = `${url}&callback=${callbackName}`;
+    // 东方财富 JSONP 回调参数名是 `cb`
+    script.src = `${url}&cb=${callbackName}`;
     script.onerror = () => {
       cleanup();
       reject(new Error('JSONP request failed'));
