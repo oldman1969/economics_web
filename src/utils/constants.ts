@@ -1,3 +1,5 @@
+import type { MarketScope } from '@/types';
+
 export const NAV_ITEMS = [
   { label: '首页', path: '/' },
   {
@@ -12,6 +14,7 @@ export const NAV_ITEMS = [
       { label: '投资首页', path: '/investing' },
       { label: '炒股入门教程', path: '/investing/beginner-guide' },
       { label: '股票实时查询', path: '/investing/stock-query' },
+      { label: '智能选股', path: '/investing/stock-screener' },
       { label: '投资建议', path: '/investing/stock-advice' },
     ],
   },
@@ -45,4 +48,12 @@ export const ECONOMIC_KEY_POINTS = [
     summary: '去杠杆化是削减债务的过程。有四种方式：削减支出、债务违约重组、财富再分配、印钞。关键是找到"漂亮的去杠杆化"。',
     detail: '四种去杠杆方式：(1) 削减支出 → 通缩萧条；(2) 债务违约/重组 → 资产价格暴跌；(3) 财富再分配 → 社会动荡；(4) 央行印钞 → 通货膨胀。"漂亮的去杠杆化"需要四种方式平衡使用，在降低债务的同时保持经济增长。',
   },
+];
+
+export const MARKET_SCOPES: { value: MarketScope; label: string }[] = [
+  { value: 'all', label: '全部A股' },
+  { value: 'sh-main', label: '沪市主板' },
+  { value: 'sz-main', label: '深市主板' },
+  { value: 'chinext', label: '创业板' },
+  { value: 'star', label: '科创板' },
 ];

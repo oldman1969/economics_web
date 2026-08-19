@@ -1,7 +1,7 @@
-import type { StockInfo, KlineData, StockSearchItem } from '@/types';
+import type { StockInfo, KlineData, StockSearchItem, StockListItem, MarketScope } from '@/types';
 
 /** JSONP helper — bypasses CORS by loading data as a script */
-function jsonp<T>(url: string, timeout = 8000): Promise<T> {
+function jsonp<T>(url: string, timeout = 8000, callbackParam = 'cb'): Promise<T> {
   return new Promise((resolve, reject) => {
     const callbackName = `_jsonp_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const script = document.createElement('script');
@@ -21,8 +21,7 @@ function jsonp<T>(url: string, timeout = 8000): Promise<T> {
       resolve(data);
     };
 
-    // 东方财富 JSONP 回调参数名是 `cb`
-    script.src = `${url}&cb=${callbackName}`;
+    script.src = `${url}&${callbackParam}=${callbackName}`;
     script.onerror = () => {
       cleanup();
       reject(new Error('JSONP request failed'));
@@ -113,5 +112,94 @@ export async function searchStocks(keyword: string): Promise<StockSearchItem[]> 
   } catch (err) {
     console.error('[stockApi] searchStocks error', err);
     return [];
+  }
+}
+
+/** 东方财富 clist 接口的股票池编码 */
+const FS_MAP: Record<MarketScope, string> = {
+  all: 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23',
+  'sh-main': 'm:1+t:2',
+  'sz-main': 'm:0+t:6',
+  chinext: 'm:0+t:80',
+  star: 'm:1+t:23',
+};
+
+const UT = 'bd1d9ddb04089700cf9c27f6f7426281';
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** 拉取股票列表（东方财富 clist，JSONP 直连；受反爬限流，最多拉市值前 900 只） */
+export async function fetchStockList(scope: MarketScope): Promise<StockListItem[]> {
+  try {
+    const fs = FS_MAP[scope].replace(/\+/g, '%2B');
+    const fields = 'f2,f3,f5,f6,f7,f8,f9,f10,f12,f14,f20,f21,f23';
+    const num = (v: unknown): number => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+    const all: StockListItem[] = [];
+    const MAX_PAGES = 9; // 前端 JSONP 反爬限流，最多 9 页（市值前 900 只）
+    for (let pn = 1; pn <= MAX_PAGES; pn++) {
+      const url = `https://push2.eastmoney.com/api/qt/clist/get?pn=${pn}&pz=100&po=1&np=1&ut=${UT}&fltt=2&invt=2&fid=f20&fs=${fs}&fields=${fields}`;
+      const data = await jsonp<{ data?: { diff?: Array<Record<string, unknown>> } }>(url);
+      const diff = data?.data?.diff;
+      if (!Array.isArray(diff) || diff.length === 0) break;
+      for (const item of diff) {
+        const pe = num(item.f9);
+        all.push({
+          code: String(item.f12),
+          name: String(item.f14),
+          price: num(item.f2),
+          changePercent: num(item.f3),
+          turnoverRate: num(item.f8),
+          pe: pe > 0 ? pe : 0,
+          volumeRatio: num(item.f10),
+          amount: num(item.f6),
+          volume: num(item.f5),
+          amplitude: num(item.f7),
+          totalMarketCap: num(item.f20),
+          pb: num(item.f23),
+          floatMarketCap: num(item.f21),
+          // 以下字段当前数据源（东方财富 clist）拿不到，先填 0，待接入其他数据源
+          totalShares: 0,
+          floatShares: 0,
+          netProfit: 0,
+          grossMargin: 0,
+          eps: 0,
+          holderCount: 0,
+          netProfitGrowth: 0,
+          netMargin: 0,
+          bps: 0,
+          dividendYield: 0,
+          revenue: 0,
+          cashFlowPerShare: 0,
+          debtRatio: 0,
+          roe: 0,
+          revenueGrowth: 0,
+        });
+      }
+      if (diff.length < 100) break; // 最后一页
+      await sleep(600); // 页间隔，避免触发限流
+    }
+    console.log('[stockApi] fetchStockList count =', all.length);
+    return all.filter((s) => s.code);
+  } catch (err) {
+    console.error('[stockApi] fetchStockList error', err);
+    return [];
+  }
+}
+
+/** 主力资金净流入（当日，单位元），拿不到返回 null */
+export async function fetchMainInflow(code: string): Promise<number | null> {
+  try {
+    const secid = toEastMoneyCode(code);
+    const url = `https://push2.eastmoney.com/api/qt/stock/fflow/daykline/get?lmt=1&klt=101&secid=${secid}&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63`;
+    const data = await jsonp<{ data?: { klines?: string[] } }>(url);
+    const klines = data?.data?.klines;
+    if (!klines || klines.length === 0) return null;
+    const parts = klines[klines.length - 1].split(',');
+    return Number(parts[1]) || 0;
+  } catch (err) {
+    console.error('[stockApi] fetchMainInflow error', err);
+    return null;
   }
 }

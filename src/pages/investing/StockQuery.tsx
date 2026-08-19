@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import * as echarts from 'echarts';
 import { useStockData } from '@/hooks/useStockData';
 import type { StockSearchItem } from '@/types';
@@ -8,6 +9,7 @@ const FAVORITES_KEY = 'stock_favorites';
 
 export default function StockQuery() {
   const { stockInfo, klines, loading, error, loadStock, search } = useStockData();
+  const [searchParams] = useSearchParams();
   const [keyword, setKeyword] = useState('');
   const [searchResults, setSearchResults] = useState<StockSearchItem[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -27,6 +29,16 @@ export default function StockQuery() {
   useEffect(() => {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   }, [favorites]);
+
+  // Preload stock from URL ?code=xxx
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code && /^\d{6}$/.test(code)) {
+      setKeyword(code);
+      loadStock(code);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const toggleFavorite = (code: string) => {
     setFavorites((prev) =>

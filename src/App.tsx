@@ -5,6 +5,7 @@ import EconomicMachine from '@/pages/economics/EconomicMachine';
 import InvestingHome from '@/pages/investing/InvestingHome';
 import BeginnerGuide from '@/pages/investing/BeginnerGuide';
 import StockQuery from '@/pages/investing/StockQuery';
+import StockScreener from '@/pages/investing/StockScreener';
 import StockAdvice from '@/pages/investing/StockAdvice';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="investing" element={<InvestingHome />} />
           <Route path="investing/beginner-guide" element={<BeginnerGuide />} />
           <Route path="investing/stock-query" element={<StockQuery />} />
+          <Route path="investing/stock-screener" element={<StockScreener />} />
           <Route path="investing/stock-advice" element={<StockAdvice />} />
         </Route>
       </Routes>
