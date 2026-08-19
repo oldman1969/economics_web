@@ -14,7 +14,7 @@ const LEVELS = [
     card: 'border-blue-200 bg-blue-50/60 hover:border-blue-300',
     iconBg: 'bg-blue-100 text-blue-600',
     text: 'text-blue-700',
-    to: '/economics/economic-machine',
+    to: '/economics',
   },
   {
     level: '第二层',

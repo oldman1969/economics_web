@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import Home from '@/pages/Home';
 import EconomicMachine from '@/pages/economics/EconomicMachine';
+import EconomicsHome from '@/pages/economics/EconomicsHome';
+import ArticlePage from '@/pages/economics/ArticlePage';
 import InvestingHome from '@/pages/investing/InvestingHome';
 import BeginnerGuide from '@/pages/investing/BeginnerGuide';
 import StockQuery from '@/pages/investing/StockQuery';
@@ -14,7 +16,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="economics" element={<EconomicsHome />} />
           <Route path="economics/economic-machine" element={<EconomicMachine />} />
+          <Route path="economics/article/:id" element={<ArticlePage />} />
           <Route path="investing" element={<InvestingHome />} />
           <Route path="investing/beginner-guide" element={<BeginnerGuide />} />
           <Route path="investing/stock-query" element={<StockQuery />} />

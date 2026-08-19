@@ -5,7 +5,11 @@ export const NAV_ITEMS = [
   {
     label: '经济学',
     children: [
+      { label: '经济学首页', path: '/economics' },
       { label: '经济机器是怎样运行的', path: '/economics/economic-machine' },
+      { label: '信贷与债务', path: '/economics/article/credit-debt' },
+      { label: '经济周期', path: '/economics/article/economic-cycle' },
+      { label: '经济周期与股市', path: '/economics/article/economy-to-stock' },
     ],
   },
   {
