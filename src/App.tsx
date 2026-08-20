@@ -30,6 +30,7 @@ export default function App() {
           <Route path="investing/self-essence" element={<SelfHome />} />
           <Route path="investing/self-essence/:id" element={<ArticlePage />} />
           <Route path="resources" element={<Resources />} />
+          <Route path="resources/note/:id" element={<ArticlePage />} />
           <Route path="investing" element={<InvestingHome />} />
           <Route path="investing/beginner-guide" element={<BeginnerGuide />} />
           <Route path="investing/stock-query" element={<StockQuery />} />

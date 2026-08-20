@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { RESOURCE_CATEGORIES } from '@/utils/resources';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, BookOpen } from 'lucide-react';
 
 const TAG_COLOR: Record<string, string> = {
   数据: 'bg-blue-100 text-blue-600',
@@ -13,6 +14,8 @@ const TAG_COLOR: Record<string, string> = {
   龙头: 'bg-orange-100 text-orange-600',
   心法: 'bg-red-100 text-red-600',
   风控: 'bg-red-100 text-red-600',
+  入门: 'bg-blue-100 text-blue-600',
+  周期: 'bg-teal-100 text-teal-600',
 };
 
 export default function Resources() {
@@ -63,6 +66,15 @@ export default function Resources() {
               </div>
               <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
             </div>
+            {item.noteId && (
+              <Link
+                to={`/resources/note/${item.noteId}`}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-blue-600 hover:bg-blue-50 transition-colors flex-shrink-0 no-underline"
+              >
+                <BookOpen size={14} />
+                读笔记
+              </Link>
+            )}
             {item.link && (
               <a
                 href={item.link}

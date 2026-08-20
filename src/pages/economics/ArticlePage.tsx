@@ -4,6 +4,8 @@ import { ECONOMIC_ARTICLES } from '@/utils/economics';
 import { COMPANY_ARTICLES } from '@/utils/company';
 import { MARKET_ARTICLES } from '@/utils/market';
 import { SELF_ARTICLES } from '@/utils/self';
+import { BOOK_NOTES } from '@/utils/bookNotes';
+import { SHORT_TERM_NOTES } from '@/utils/shortTermNotes';
 import { renderMarkdown } from '@/utils/markdown';
 
 const SOURCES = [
@@ -11,6 +13,8 @@ const SOURCES = [
   { articles: COMPANY_ARTICLES, backTo: '/investing/company-essence', backLabel: '返回公司的本质' },
   { articles: MARKET_ARTICLES, backTo: '/investing/market-essence', backLabel: '返回认识市场' },
   { articles: SELF_ARTICLES, backTo: '/investing/self-essence', backLabel: '返回认识自己' },
+  { articles: BOOK_NOTES, backTo: '/resources', backLabel: '返回学习资源' },
+  { articles: SHORT_TERM_NOTES, backTo: '/resources', backLabel: '返回学习资源' },
 ];
 
 export default function ArticlePage() {
