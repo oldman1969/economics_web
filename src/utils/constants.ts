@@ -10,6 +10,7 @@ export const NAV_ITEMS = [
       { label: '认识市场', path: '/investing/market-essence' },
       { label: '认识自己', path: '/investing/self-essence' },
       { label: '炒股入门教程', path: '/investing/beginner-guide' },
+      { label: '学习资源', path: '/resources' },
     ],
   },
   {
