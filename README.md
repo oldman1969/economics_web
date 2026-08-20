@@ -1,76 +1,93 @@
 # Economics & Investing
 
-经济与投资学习平台 — 帮助每个人理解经济、学会投资。
+从本质理解投资 — 帮助每个敬畏市场的新手建立正确的投资世界观。
+
+## 产品定位
+
+市面上不缺工具和资讯，缺的是「从本质建立认知」。这个网站用**四层认知金字塔**帮新手理解投资：
+
+```
+第四层 认识自己   ← 风险 / 仓位 / 情绪 / 复利
+第三层 认识市场   ← 估值 / 情绪 / 牛熊周期
+第二层 认识公司   ← 所有权 / 商业模式 / 财报
+第一层 认识经济   ← 交易 / 信贷 / 债务周期
+```
 
 ## 功能
 
-### 经济学
-- 🎬 **《经济机器是怎样运行的》** — Ray Dalio / 桥水基金出品，30 分钟动画讲解经济运行原理（B 站视频源）
+### 认知内容（四层，16 篇文章 + 1 视频）
+- 🎬 经济学（第一层）：经济机器视频 + 信贷、央行、周期、通胀 5 篇文章
+- 🏢 公司的本质（第二层）：股票、商业模式、好公司、财报 4 篇
+- 📈 认识市场（第三层）：估值、市场先生、牛熊 3 篇
+- 🧘 认识自己（第四层）：本金、仓位、情绪、复利 4 篇
 
-### 投资（A 股）
-- 📖 **炒股入门教程** — 7 章从零开始：什么是股票、A 股入门、开户流程、基础术语、如何看盘、交易实操、风险控制
-- 📊 **股票实时查询** — 搜索 A 股代码或名称，查看实时行情、K 线图、自选股收藏
-- 🔍 **智能选股** — 多维度条件筛选，类似同花顺"动态分组"，支持保存分组：
-  - 选股范围（沪深主板 / 创业板 / 科创板）
-  - 估值指标（市盈率、总市值、市净率、流通市值等）
-  - 财务指标（净利润、ROE、毛利率等，待接入数据源）
-  - 技术面 · 行情指标（股价、涨跌幅、换手率、量比、振幅等）
-  - 技术面 · 技术指标（均线、BOLL、MACD、KDJ、RSI、WR）
-  - 特色指标（龙虎榜、机构评级、增减持等，待接入数据源）
-  - 指标悬停提示
-- 💡 **投资建议** — 即将上线（AI 诊股、基本面分析、技术指标分析）
+### 工具
+- 📊 **股票实时查询** — 搜索代码/名称，实时行情、K 线图、自选股收藏
+- 🔍 **智能选股** — 估值 / 财务 / 技术面多维度筛选，支持保存分组、指标悬停提示
+- 💡 **AI 分析** — 个股诊断 + 多轮对话，自备 OpenAI 兼容 Key，支持深度思考展示
+
+### 学习资源
+- 📚 开源库（AKShare / Backtrader / Qlib 等）
+- 📖 长线书单（7 本书 + 读书笔记）
+- ⚡ 短线经验（6 篇通俗文章 + 案例讲解）
 
 ## 技术栈
 
 | 层 | 技术 |
-|---|------|
-| 框架 | React 18 + TypeScript |
-| 构建 | Vite |
-| 样式 | Tailwind CSS |
-| 路由 | React Router v6 |
+|----|------|
+| 前端 | React 18 + TypeScript + Vite + Tailwind CSS |
+| 后端 | Python FastAPI + AKShare |
 | 图表 | ECharts |
-| 股票数据 | 东方财富 API（JSONP 跨域） |
 | 技术指标 | 自研（MACD / KDJ / RSI / BOLL / WR / 均线） |
+| AI | OpenAI 兼容接口（DeepSeek / 智谱 / 通义等，用户自备 Key） |
 
 ## 开始
 
+### 前端
+
 ```bash
 npm install
-npm run dev      # 开发服务器 → http://localhost:5173
+npm run dev      # http://localhost:5173
 npm run build    # 生产构建 → dist/
+```
+
+### 后端（选股器财务筛选需要）
+
+```bash
+cd server
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000   # http://localhost:8000/docs
 ```
 
 ## 项目结构
 
 ```
-src/
-├── components/layout/   # Navbar、Layout
-├── hooks/               # useStockData
-├── services/            # stockApi（东方财富 JSONP）
-├── types/               # TypeScript 类型
-├── utils/
-│   ├── constants.ts     # 导航菜单、选股范围、经济知识点
-│   └── indicators.ts    # 技术指标计算（MACD/KDJ/RSI/BOLL/WR/均线）
-└── pages/
-    ├── Home.tsx                       # 首页
-    ├── economics/
-    │   └── EconomicMachine.tsx        # 经济机器视频
-    └── investing/
-        ├── InvestingHome.tsx          # 投资首页
-        ├── BeginnerGuide.tsx          # 炒股入门教程
-        ├── StockQuery.tsx             # 股票查询
-        ├── StockScreener.tsx          # 智能选股
-        └── StockAdvice.tsx            # 投资建议
+├── src/                    # 前端（React）
+│   ├── components/         # Navbar、Layout、通用组件
+│   ├── hooks/              # useStockData、useAiConfig
+│   ├── services/           # stockApi（东方财富 JSONP + 后端）、aiService
+│   ├── types/              # TypeScript 类型
+│   ├── utils/              # 常量、技术指标、文章数据、markdown 渲染
+│   └── pages/              # 首页、经济学、投资、学习资源
+└── server/                 # 后端（FastAPI + AKShare）
+    ├── main.py             # FastAPI 入口
+    ├── akshare_api.py      # 数据封装（腾讯 + 同花顺）
+    └── requirements.txt
 ```
 
 ## 数据源说明
 
-- **行情 / 估值**：东方财富 `clist` 接口（JSONP 跨域），开发阶段受反爬限流，选股仅覆盖市值前 900 只
-- **股票详情 / K 线 / 搜索 / 主力资金**：东方财富 `stock/get`、`kline/get`、`suggest/get`、`fflow` 接口
-- **财务指标 / 股本 / 特色指标**：当前数据源暂未提供，界面已预留（置灰禁用），待接入其他数据源
+| 数据 | 来源 | 方式 |
+|------|------|------|
+| 全市场列表（行情/估值） | 腾讯 | 后端 AKShare |
+| 财务指标 | 同花顺 | 后端 AKShare |
+| K 线 | 腾讯 | 后端 AKShare |
+| 股票详情 / 搜索 / 主力资金 | 东方财富 | 前端 JSONP 直连 |
+
+> 后端数据源刻意避开了东方财富（该域名在公司网络下被限制）。浏览器能直连东财（走系统代理），但 Python/Node.js 进程直连会被重置。
 
 ## 部署
 
-构建产物在 `dist/` 目录，可直接部署到 Nginx 等静态服务器。
-
-> 生产环境建议加后端代理 + 缓存：解决跨域、突破反爬限流、拉取全市场股票及财务数据。
+- **前端**：`dist/` 静态文件，Nginx 托管
+- **后端**：`server/` 用 uvicorn 运行，Nginx 反向代理 `/api` 到后端端口
+- 生产环境需把 `src/services/stockApi.ts` 里的 `API_BASE_URL` 改成服务器地址
