@@ -35,20 +35,22 @@ export default function Navbar() {
                     <ChevronDown size={14} />
                   </button>
                   {openDropdown === item.label && (
-                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg py-2 min-w-[180px]">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          className={`block px-4 py-2 text-sm hover:bg-gray-50 no-underline ${
-                            location.pathname === child.path
-                              ? 'text-blue-600 font-medium'
-                              : 'text-gray-600'
-                          }`}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                    <div className="absolute top-full left-0 pt-1">
+                      <div className="bg-white border border-gray-200 rounded-xl shadow-lg py-2 min-w-[180px]">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.path}
+                            to={child.path}
+                            className={`block px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 no-underline ${
+                              location.pathname === child.path
+                                ? 'text-blue-600 font-medium bg-blue-50'
+                                : 'text-gray-600'
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
