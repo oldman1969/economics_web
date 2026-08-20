@@ -322,7 +322,6 @@ const AI_PROVIDERS = [
   { name: '腾讯 混元', baseUrl: 'https://api.hunyuan.cloud.tencent.com/v1', model: 'hunyuan-lite' },
   { name: '稀宇 MiniMax', baseUrl: 'https://api.minimax.chat/v1', model: 'MiniMax-Text-01' },
   { name: '阶跃星辰 StepFun', baseUrl: 'https://api.stepfun.com/v1', model: 'step-1-8k' },
-  { name: '其他（手动填写）', baseUrl: '', model: '' },
 ];
 
 function ConfigModal({
@@ -382,8 +381,8 @@ function ConfigModal({
     }
   };
 
-  const handleProvider = (e: { target: { value: string } }) => {
-    const provider = AI_PROVIDERS.find((p) => p.name === e.target.value);
+  const handleProvider = (name: string) => {
+    const provider = AI_PROVIDERS.find((p) => p.name === name);
     if (provider) {
       setBaseUrl(provider.baseUrl);
       setModel(provider.model);
@@ -403,12 +402,17 @@ function ConfigModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1.5">快速选择厂商</label>
-            <select onChange={handleProvider} defaultValue="" className={inputCls}>
-              <option value="" disabled>选择预设…</option>
+            <div className="flex flex-wrap gap-1.5">
               {AI_PROVIDERS.map((p) => (
-                <option key={p.name} value={p.name}>{p.name}</option>
+                <button
+                  key={p.name}
+                  onClick={() => handleProvider(p.name)}
+                  className="px-2.5 py-1.5 rounded-lg text-xs bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  {p.name}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           <div>
