@@ -169,4 +169,5 @@ export interface AiConfig {
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
+  reasoning?: string; // 思考过程（深度思考模型）
 }

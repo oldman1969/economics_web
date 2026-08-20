@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import type { AiConfig, ChatMessage, StockInfo, KlineData } from '@/types';
+import { useState, useRef } from 'react';
+import type { AiConfig, ChatMessage, StockInfo, KlineData, StockSearchItem } from '@/types';
 import { fetchStockInfo, fetchKline, searchStocks } from '@/services/stockApi';
-import { chat, fetchModels, testConnection } from '@/services/aiService';
+import { chatStream, fetchModels, testConnection } from '@/services/aiService';
 import { useAiConfig } from '@/hooks/useAiConfig';
 import {
   macd, kdj, ma, boll, latestRsi, latestWr,
@@ -67,8 +67,12 @@ export default function StockAdvice() {
   // 诊断状态
   const [diagKeyword, setDiagKeyword] = useState('');
   const [diagResult, setDiagResult] = useState('');
+  const [diagReasoning, setDiagReasoning] = useState('');
   const [diagLoading, setDiagLoading] = useState(false);
   const [diagError, setDiagError] = useState('');
+  const [diagSuggestions, setDiagSuggestions] = useState<StockSearchItem[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 对话状态
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -81,8 +85,30 @@ export default function StockAdvice() {
   const resolveCode = async (input: string): Promise<string | null> => {
     const trimmed = input.trim();
     if (/^\d{6}$/.test(trimmed)) return trimmed;
+    const match = trimmed.match(/\((\d{6})\)$/);
+    if (match) return match[1];
     const results = await searchStocks(trimmed);
     return results.length > 0 ? results[0].code : null;
+  };
+
+  const onDiagSearchChange = (value: string) => {
+    setDiagKeyword(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    if (!value.trim()) {
+      setDiagSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    searchTimer.current = setTimeout(async () => {
+      const results = await searchStocks(value);
+      setDiagSuggestions(results);
+      setShowSuggestions(true);
+    }, 300);
+  };
+
+  const selectDiagSuggestion = (item: StockSearchItem) => {
+    setDiagKeyword(`${item.name} (${item.code})`);
+    setShowSuggestions(false);
   };
 
   const runDiagnosis = async () => {
@@ -94,6 +120,7 @@ export default function StockAdvice() {
     setDiagLoading(true);
     setDiagError('');
     setDiagResult('');
+    setDiagReasoning('');
     try {
       const code = await resolveCode(diagKeyword);
       if (!code) {
@@ -106,8 +133,12 @@ export default function StockAdvice() {
         return;
       }
       const prompt = buildDiagnosisPrompt(info, klines);
-      const result = await chat(config, prompt);
-      setDiagResult(result);
+      const result = await chatStream(config, prompt, (chunk) => {
+        setDiagReasoning(chunk.reasoning);
+        setDiagResult(chunk.content);
+      });
+      setDiagReasoning(result.reasoning);
+      setDiagResult(result.content);
     } catch (err) {
       setDiagError(err instanceof Error ? err.message : '分析失败，请稍后重试');
     } finally {
@@ -129,8 +160,13 @@ export default function StockAdvice() {
     setChatLoading(true);
     setChatError('');
     try {
-      const result = await chat(config, [{ role: 'system', content: SYSTEM_PROMPT }, ...history]);
-      setMessages([...history, { role: 'assistant', content: result }]);
+      setMessages([...history, { role: 'assistant', content: '', reasoning: '' }]);
+      const result = await chatStream(
+        config,
+        [{ role: 'system', content: SYSTEM_PROMPT }, ...history],
+        (chunk) => setMessages([...history, { role: 'assistant', content: chunk.content, reasoning: chunk.reasoning }])
+      );
+      setMessages([...history, { role: 'assistant', content: result.content, reasoning: result.reasoning }]);
     } catch (err) {
       setChatError(err instanceof Error ? err.message : '回复失败，请稍后重试');
     } finally {
@@ -191,14 +227,32 @@ export default function StockAdvice() {
               <input
                 type="text"
                 value={diagKeyword}
-                onChange={(e) => setDiagKeyword(e.target.value)}
+                onChange={(e) => onDiagSearchChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && runDiagnosis()}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 placeholder="输入股票代码或名称，如 600519 或 贵州茅台"
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              {showSuggestions && diagSuggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
+                  {diagSuggestions.map((item) => (
+                    <button
+                      key={item.code}
+                      onMouseDown={() => selectDiagSuggestion(item)}
+                      className="w-full text-left px-4 py-2.5 hover:bg-blue-50 flex items-center justify-between"
+                    >
+                      <div>
+                        <span className="text-sm font-medium text-gray-900">{item.name}</span>
+                        <span className="text-xs text-gray-400 ml-2">{item.code}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">{item.market === 'SH' ? '沪' : item.market === 'SZ' ? '深' : '北'}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button
-              onClick={runDiagnosis}
+              onClick={() => runDiagnosis()}
               disabled={diagLoading}
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium transition-colors whitespace-nowrap"
             >
@@ -213,15 +267,24 @@ export default function StockAdvice() {
             </div>
           )}
 
-          {diagLoading && (
+          {diagLoading && !diagResult && (
             <div className="card text-center py-16">
               <Loader2 size={28} className="animate-spin text-blue-600 mx-auto mb-3" />
               <p className="text-gray-500">AI 正在分析，请稍候…</p>
             </div>
           )}
 
-          {diagResult && !diagLoading && (
+          {diagResult && (
             <div className="card">
+              {diagReasoning && (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-400 mb-1.5">思考过程</p>
+                  <div
+                    className="text-xs text-gray-500 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(diagReasoning) }}
+                  />
+                </div>
+              )}
               <div
                 className="prose prose-gray max-w-none text-sm leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(diagResult) }}
@@ -259,18 +322,23 @@ export default function StockAdvice() {
                       ? 'bg-blue-600 text-white rounded-br-sm'
                       : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                   }`}
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(m.content) }}
-                />
-              </div>
-            ))}
-            {chatLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 px-4 py-2.5 rounded-2xl rounded-bl-sm text-sm text-gray-400 flex items-center gap-2">
-                  <Loader2 size={14} className="animate-spin" />
-                  思考中…
+                >
+                  {m.reasoning && (
+                    <div className="mb-2 text-xs text-gray-400 leading-relaxed whitespace-pre-wrap">
+                      {m.reasoning}
+                    </div>
+                  )}
+                  {m.content ? (
+                    <span dangerouslySetInnerHTML={{ __html: renderMarkdown(m.content) }} />
+                  ) : (
+                    <span className="flex items-center gap-2 text-gray-400">
+                      <Loader2 size={14} className="animate-spin" />
+                      思考中…
+                    </span>
+                  )}
                 </div>
               </div>
-            )}
+            ))}
           </div>
 
           {chatError && (
