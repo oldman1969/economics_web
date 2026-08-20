@@ -203,3 +203,63 @@ export async function fetchMainInflow(code: string): Promise<number | null> {
     return null;
   }
 }
+
+const API_BASE_URL = 'http://localhost:8000';
+
+/** 拉取全市场列表（后端 AKShare，腾讯源，不限流） */
+export async function fetchStockListBackend(): Promise<StockListItem[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/stock/list`);
+    const data = await res.json();
+    if (data.code !== 0 || !Array.isArray(data.data)) return [];
+    return data.data.map((item: Record<string, unknown>) => ({
+      code: String(item.code ?? ''),
+      name: String(item.name ?? ''),
+      price: Number(item.price) || 0,
+      changePercent: Number(item.changePercent) || 0,
+      turnoverRate: Number(item.turnoverRate) || 0,
+      volumeRatio: Number(item.volumeRatio) || 0,
+      amount: Number(item.amount) || 0,
+      volume: Number(item.volume) || 0,
+      amplitude: Number(item.amplitude) || 0,
+      pe: Number(item.pe) || 0,
+      totalMarketCap: Number(item.totalMarketCap) || 0,
+      floatMarketCap: Number(item.floatMarketCap) || 0,
+      // 后端 list 暂未提供的字段，先填 0
+      pb: 0,
+      totalShares: 0,
+      floatShares: 0,
+      roe: 0, revenue: 0, revenueGrowth: 0, netProfit: 0, netProfitGrowth: 0,
+      eps: 0, bps: 0, debtRatio: 0, cashFlowPerShare: 0,
+      grossMargin: 0, holderCount: 0, netMargin: 0, dividendYield: 0,
+    }));
+  } catch (err) {
+    console.error('[stockApi] fetchStockListBackend error', err);
+    return [];
+  }
+}
+
+/** 拉取个股财务指标（后端 AKShare，同花顺源） */
+export async function fetchFinancialBackend(code: string): Promise<Partial<StockListItem>> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/stock/financial/${code}`);
+    const data = await res.json();
+    if (data.code !== 0) return {};
+    return {
+      netProfit: Number(data.data.netProfit) || 0,
+      netProfitGrowth: Number(data.data.netProfitGrowth) || 0,
+      revenue: Number(data.data.revenue) || 0,
+      revenueGrowth: Number(data.data.revenueGrowth) || 0,
+      eps: Number(data.data.eps) || 0,
+      bps: Number(data.data.bps) || 0,
+      cashFlowPerShare: Number(data.data.cashFlowPerShare) || 0,
+      netMargin: Number(data.data.netMargin) || 0,
+      grossMargin: Number(data.data.grossMargin) || 0,
+      roe: Number(data.data.roe) || 0,
+      debtRatio: Number(data.data.debtRatio) || 0,
+    };
+  } catch (err) {
+    console.error('[stockApi] fetchFinancialBackend error', err);
+    return {};
+  }
+}

@@ -7,7 +7,7 @@ import type {
   ScreenerResultItem,
   RangeCond,
 } from '@/types';
-import { fetchStockList, fetchKline, fetchMainInflow } from '@/services/stockApi';
+import { fetchStockListBackend, fetchFinancialBackend, fetchKline, fetchMainInflow } from '@/services/stockApi';
 import {
   macd, kdj, isMacdGoldenCross, isKdjGoldenCross, isBullsAlignment, latestRsi,
   isBollBreakout, isWrOversold,
@@ -98,19 +98,19 @@ const VALUATION_FIELDS: FieldDef[] = [
 ];
 
 const FINANCIAL_FIELDS: FieldDef[] = [
-  { key: 'netProfit', label: '净利润', desc: '公司一定时期赚取的利润总额，反映最终盈利能力。', unit: '亿', available: false },
-  { key: 'grossMargin', label: '毛利率', desc: '毛利 ÷ 营业收入，反映产品的核心竞争力。', unit: '%', available: false },
-  { key: 'eps', label: '每股收益', desc: '净利润 ÷ 总股本，反映每股创造的利润。', unit: '元', available: false },
+  { key: 'netProfit', label: '净利润', desc: '公司一定时期赚取的利润总额，反映最终盈利能力。', unit: '亿', available: true },
+  { key: 'grossMargin', label: '毛利率', desc: '毛利 ÷ 营业收入，反映产品的核心竞争力。', unit: '%', available: true },
+  { key: 'eps', label: '每股收益', desc: '净利润 ÷ 总股本，反映每股创造的利润。', unit: '元', available: true },
   { key: 'holderCount', label: '股东户数', desc: '持有该股的股东数，户数减少通常意味着筹码集中。', unit: '户', available: false },
-  { key: 'netProfitGrowth', label: '净利增长', desc: '净利润相比上年同期的增长率。', unit: '%', available: false },
-  { key: 'netMargin', label: '净利率', desc: '净利润 ÷ 营业收入，反映整体盈利效率。', unit: '%', available: false },
-  { key: 'bps', label: '每股净资产', desc: '净资产 ÷ 总股本，反映每股对应的账面资产。', unit: '元', available: false },
+  { key: 'netProfitGrowth', label: '净利增长', desc: '净利润相比上年同期的增长率。', unit: '%', available: true },
+  { key: 'netMargin', label: '净利率', desc: '净利润 ÷ 营业收入，反映整体盈利效率。', unit: '%', available: true },
+  { key: 'bps', label: '每股净资产', desc: '净资产 ÷ 总股本，反映每股对应的账面资产。', unit: '元', available: true },
   { key: 'dividendYield', label: '股息率', desc: '每股分红 ÷ 股价，反映现金分红回报。', unit: '%', available: false },
-  { key: 'revenue', label: '营业收入', desc: '公司主营业务收入总额。', unit: '亿', available: false },
-  { key: 'cashFlowPerShare', label: '每股现金流', desc: '经营现金流 ÷ 总股本，反映现金质量。', unit: '元', available: false },
-  { key: 'debtRatio', label: '资产负债率', desc: '总负债 ÷ 总资产，衡量杠杆和偿债风险。', unit: '%', available: false },
-  { key: 'roe', label: 'ROE', desc: '净资产收益率 = 净利润 ÷ 净资产，衡量股东资金的使用效率。', unit: '%', available: false },
-  { key: 'revenueGrowth', label: '营收增长', desc: '营业收入相比上年同期的增长率。', unit: '%', available: false },
+  { key: 'revenue', label: '营业收入', desc: '公司主营业务收入总额。', unit: '亿', available: true },
+  { key: 'cashFlowPerShare', label: '每股现金流', desc: '经营现金流 ÷ 总股本，反映现金质量。', unit: '元', available: true },
+  { key: 'debtRatio', label: '资产负债率', desc: '总负债 ÷ 总资产，衡量杠杆和偿债风险。', unit: '%', available: true },
+  { key: 'roe', label: 'ROE', desc: '净资产收益率 = 净利润 ÷ 净资产，衡量股东资金的使用效率。', unit: '%', available: true },
+  { key: 'revenueGrowth', label: '营收增长', desc: '营业收入相比上年同期的增长率。', unit: '%', available: true },
 ];
 
 const QUOTE_FIELDS: FieldDef[] = [
@@ -325,22 +325,6 @@ export default function StockScreener() {
       if (!inRange(s.pb, c.pb)) return false;
       if (!inRange(s.totalMarketCap / 1e8, c.totalMarketCap)) return false;
       if (!inRange(s.floatMarketCap / 1e8, c.floatMarketCap)) return false;
-      if (!inRange(s.totalShares / 1e8, c.totalShares)) return false;
-      if (!inRange(s.floatShares / 1e8, c.floatShares)) return false;
-      // 财务
-      if (!inRange(s.netProfit / 1e8, c.netProfit)) return false;
-      if (!inRange(s.grossMargin, c.grossMargin)) return false;
-      if (!inRange(s.eps, c.eps)) return false;
-      if (!inRange(s.holderCount, c.holderCount)) return false;
-      if (!inRange(s.netProfitGrowth, c.netProfitGrowth)) return false;
-      if (!inRange(s.netMargin, c.netMargin)) return false;
-      if (!inRange(s.bps, c.bps)) return false;
-      if (!inRange(s.dividendYield, c.dividendYield)) return false;
-      if (!inRange(s.revenue / 1e8, c.revenue)) return false;
-      if (!inRange(s.cashFlowPerShare, c.cashFlowPerShare)) return false;
-      if (!inRange(s.debtRatio, c.debtRatio)) return false;
-      if (!inRange(s.roe, c.roe)) return false;
-      if (!inRange(s.revenueGrowth, c.revenueGrowth)) return false;
       // 行情指标
       if (!inRange(s.price, c.price)) return false;
       if (!inRange(s.changePercent, c.change)) return false;
@@ -352,6 +336,30 @@ export default function StockScreener() {
       return true;
     });
   };
+
+  // 财务筛选（需先通过 fetchFinancialBackend 填充财务字段）
+  const financialFilter = (list: StockListItem[]): StockListItem[] => {
+    const c = condition;
+    return list.filter((s) => {
+      if (!inRange(s.netProfit / 1e8, c.netProfit)) return false;
+      if (!inRange(s.grossMargin, c.grossMargin)) return false;
+      if (!inRange(s.eps, c.eps)) return false;
+      if (!inRange(s.netProfitGrowth, c.netProfitGrowth)) return false;
+      if (!inRange(s.netMargin, c.netMargin)) return false;
+      if (!inRange(s.bps, c.bps)) return false;
+      if (!inRange(s.revenue / 1e8, c.revenue)) return false;
+      if (!inRange(s.cashFlowPerShare, c.cashFlowPerShare)) return false;
+      if (!inRange(s.debtRatio, c.debtRatio)) return false;
+      if (!inRange(s.roe, c.roe)) return false;
+      if (!inRange(s.revenueGrowth, c.revenueGrowth)) return false;
+      return true;
+    });
+  };
+
+  const needFinancial = FINANCIAL_FIELDS.some((f) => {
+    const r = condition[f.key];
+    return r.min != null || r.max != null;
+  });
 
   const analyzeTech = async (item: StockListItem): Promise<ScreenerResultItem | null> => {
     const klines = await fetchKline(item.code, 'day', 60);
@@ -377,12 +385,27 @@ export default function StockScreener() {
     setNotice('');
     setResults([]);
     try {
-      const list = await fetchStockList(condition.scope);
+      const list = await fetchStockListBackend();
       if (list.length === 0) {
-        setError('未获取到股票列表，请稍后重试');
+        setError('未获取到股票列表，请确认后端服务已启动（cd server && uvicorn main:app --port 8000）');
         return;
       }
-      const candidates = stage1Filter(list);
+      let candidates = stage1Filter(list);
+
+      // 财务筛选：候选集逐只查财务（同花顺单只接口）
+      if (needFinancial) {
+        const FIN_LIMIT = 200;
+        const total = candidates.length;
+        const limited = candidates.slice(0, FIN_LIMIT);
+        const enriched = await mapLimit(limited, 5, async (s) => {
+          const fin = await fetchFinancialBackend(s.code);
+          return { ...s, ...fin };
+        });
+        candidates = financialFilter(enriched);
+        if (total > FIN_LIMIT) {
+          setNotice(`基础条件命中 ${total} 只，财务分析仅覆盖前 ${FIN_LIMIT} 只，建议缩小范围`);
+        }
+      }
 
       let result: ScreenerResultItem[];
       const LIMITED = 200;
