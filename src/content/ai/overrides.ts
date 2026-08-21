@@ -50,4 +50,12 @@ export const ARTICLE_OVERRIDES: Record<string, { title?: string; summary?: strin
   // ── 参考资料导读（references）─────────────────────────────────────────
   '理解深度学习-Prince导读.md': { title: '理解深度学习（Prince 导读）', summary: '21 章深度学习数学教科书导读与交叉映射，数学底座。' },
   '深入理解AIAgent-李博杰导读.md': { title: '深入理解 AI Agent（李博杰导读）', summary: 'Agent 工程实践全书导读，逐章研读见「Agent 工程」。' },
+
+  // ── 多模态（multimodal）──────────────────────────────────────────────
+  '多模态发展史.md': { title: '多模态发展史', summary: '图像、语音、视频三条并行线，如何汇聚成多模态 AI。' },
+  '01-CLIP深度解剖.md': { title: 'CLIP 深度解剖', summary: '对比学习与图文对齐，多模态的对齐鼻祖。' },
+  '02-LLaVA与VLM骨架.md': { title: 'LLaVA 与 VLM 骨架', summary: '视觉编码器 + 投影 + LLM，看懂 90% 的视觉语言模型。' },
+  '03-ViT视觉编码器.md': { title: 'ViT 视觉编码器', summary: '图像怎么切成 patch、变成 token。' },
+  '04-Whisper语音识别.md': { title: 'Whisper 语音识别', summary: '音频怎么切成帧、变成 token。' },
+  '05-视频.md': { title: '视频——理解与生成', summary: '时空 patch 与 Sora 的时空扩散。' },
 };

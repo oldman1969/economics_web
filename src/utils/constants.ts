@@ -9,6 +9,7 @@ export const NAV_ITEMS = [
       { label: '历史脉络', path: '/ai/notes' },
       { label: '技术解剖', path: '/ai/deep-dives' },
       { label: 'Agent 工程', path: '/ai/agent' },
+      { label: '多模态', path: '/ai/multimodal' },
       { label: '参考资料', path: '/ai/references' },
       { label: 'MATLAB 代码', path: '/ai/code' },
     ],

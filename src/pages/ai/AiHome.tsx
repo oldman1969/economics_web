@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { History, Braces, Bot, BookMarked, Terminal, ArrowRight } from 'lucide-react';
+import { History, Braces, Bot, BookMarked, Terminal, ArrowRight, Images } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { AiCategory } from '@/content/ai';
 
@@ -54,6 +54,16 @@ const ENTRY_CARDS: EntryCard[] = [
     border: 'border-amber-200 bg-amber-50/60 hover:border-amber-300',
     iconBg: 'bg-amber-100 text-amber-600',
     text: 'text-amber-700',
+  },
+  {
+    key: 'multimodal',
+    icon: Images,
+    title: '多模态',
+    desc: 'CLIP / LLaVA / ViT / Whisper，AI 如何看图、听声、看视频',
+    to: '/ai/multimodal',
+    border: 'border-rose-200 bg-rose-50/60 hover:border-rose-300',
+    iconBg: 'bg-rose-100 text-rose-600',
+    text: 'text-rose-700',
   },
 ];
 

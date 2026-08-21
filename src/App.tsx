@@ -44,6 +44,7 @@ export default function App() {
           <Route path="ai/notes" element={<AiCategoryPage category="notes" />} />
           <Route path="ai/deep-dives" element={<AiCategoryPage category="deep-dives" />} />
           <Route path="ai/agent" element={<AiCategoryPage category="agent" />} />
+          <Route path="ai/multimodal" element={<AiCategoryPage category="multimodal" />} />
           <Route path="ai/references" element={<AiCategoryPage category="references" />} />
           <Route path="ai/article/:id" element={<AiArticlePage />} />
           <Route path="ai/code" element={<AiCodePage />} />

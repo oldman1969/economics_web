@@ -42,6 +42,7 @@ const RULES = [
   { src: 'learn_agent', dst: 'agent' },
   { src: 'references', dst: 'references' },
   { src: 'ai_theory/code', dst: 'code' },
+  { src: 'multimodal', dst: 'multimodal' },
 ];
 
 // 排除项：README、全文提取、PDF 不打包

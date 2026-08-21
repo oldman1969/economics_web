@@ -3,7 +3,7 @@
 // 内容以原始 .md / .m 字符串通过 Vite `?raw` 打包，与源仓库保持同构，便于日后同步。
 import { ARTICLE_OVERRIDES } from './overrides';
 
-export type AiCategory = 'notes' | 'deep-dives' | 'agent' | 'references';
+export type AiCategory = 'notes' | 'deep-dives' | 'agent' | 'references' | 'multimodal';
 
 export interface AiArticle {
   id: string;
@@ -44,25 +44,33 @@ const CATEGORY_ID_PREFIX: Record<string, string> = {
   notes: 'note',
   'deep-dives': 'dd',
   agent: 'agent',
+  multimodal: 'mm',
 };
 
-const REFERENCE_IDS: Record<string, string> = {
+/** 无数字前缀的文章 → 显式 id（references 两篇 + multimodal 发展史） */
+const SPECIAL_IDS: Record<string, string> = {
   '理解深度学习-Prince导读.md': 'ref-prince',
   '深入理解AIAgent-李博杰导读.md': 'ref-agent',
+  '多模态发展史.md': 'mm-history',
 };
 
 function deriveId(category: string, filename: string): string | null {
-  if (category === 'references') return REFERENCE_IDS[filename] ?? null;
+  if (SPECIAL_IDS[filename]) return SPECIAL_IDS[filename];
   const prefix = CATEGORY_ID_PREFIX[category];
   const m = filename.match(/^(\d{2})-/);
   return prefix && m ? `${prefix}-${m[1]}` : null;
 }
 
-function deriveGroup(category: string, filename: string): string | undefined {
-  if (category !== 'deep-dives') return undefined;
-  const m = filename.match(/^(\d{2})-/);
-  if (!m) return undefined;
-  return parseInt(m[1], 10) <= 10 ? '主线技术' : '补充章节';
+function deriveGroup(category: string, subdir: string | undefined, filename: string): string | undefined {
+  if (category === 'deep-dives') {
+    const m = filename.match(/^(\d{2})-/);
+    if (!m) return undefined;
+    return parseInt(m[1], 10) <= 10 ? '主线技术' : '补充章节';
+  }
+  if (category === 'multimodal') {
+    return subdir === 'history' ? '发展史' : '深度解剖';
+  }
+  return undefined;
 }
 
 /** 从首行 `# 标题` 提取标题 */
@@ -95,6 +103,7 @@ function buildArticles(): AiArticle[] {
   for (const file of Object.keys(mdRaw).sort()) {
     const parts = file.split('/'); // ['./notes/01-智能的起点.md']
     const category = parts[1];
+    const subdir = parts[2];
     const filename = parts[parts.length - 1];
     const id = deriveId(category, filename);
     if (!id) continue;
@@ -103,7 +112,7 @@ function buildArticles(): AiArticle[] {
     articles.push({
       id,
       category: category as AiCategory,
-      group: deriveGroup(category, filename),
+      group: deriveGroup(category, subdir, filename),
       title: override.title ?? extractTitle(content),
       summary: override.summary ?? extractSummary(content),
       file,
@@ -186,6 +195,12 @@ export const CATEGORY_META: Record<AiCategory, AiCategoryMeta> = {
     title: '深入理解 AI Agent',
     subtitle: '李博杰《深入理解 AI Agent》10 章研读笔记',
     path: '/ai/agent',
+  },
+  multimodal: {
+    label: '多模态',
+    title: '多模态 AI',
+    subtitle: '让 AI 不只读文字——看图、听声、看视频，多模态如何统一',
+    path: '/ai/multimodal',
   },
   references: {
     label: '参考资料',

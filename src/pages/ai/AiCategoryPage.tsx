@@ -3,6 +3,18 @@ import { ArrowLeft, FileText, ArrowRight } from 'lucide-react';
 import { getArticlesByCategory, CATEGORY_META } from '@/content/ai';
 import type { AiArticle, AiCategory } from '@/content/ai';
 
+/** 分组标题的展示文案（未列出的分组直接用原 group 名） */
+const GROUP_HEADINGS: Record<string, string> = {
+  '主线技术': '主线技术（对应历史脉络）',
+  '补充章节': '补充章节（对应 Prince 教材）',
+};
+
+/** 各分类的分组展示顺序（未列出的分组按出现顺序排在后面） */
+const GROUP_ORDER: Record<string, string[]> = {
+  'deep-dives': ['主线技术', '补充章节'],
+  multimodal: ['发展史', '深度解剖'],
+};
+
 function ArticleList({ articles }: { articles: AiArticle[] }) {
   return (
     <div className="space-y-3">
@@ -43,16 +55,41 @@ export default function AiCategoryPage({ category }: { category: AiCategory }) {
         <p className="text-gray-500">{meta.subtitle}</p>
       </div>
 
-      {category === 'deep-dives' ? (
-        <>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">主线技术（对应历史脉络）</h2>
-          <ArticleList articles={articles.filter((a) => a.group === '主线技术')} />
-          <h2 className="text-xl font-bold text-gray-900 mb-4 mt-10">补充章节（对应 Prince 教材）</h2>
-          <ArticleList articles={articles.filter((a) => a.group === '补充章节')} />
-        </>
-      ) : (
-        <ArticleList articles={articles} />
-      )}
+      {(() => {
+        // 按 group 字段分组（保持出现顺序）；无分组则平铺
+        const groups: { name: string; items: AiArticle[] }[] = [];
+        for (const a of articles) {
+          const name = a.group ?? '';
+          const bucket = groups.find((g) => g.name === name);
+          if (bucket) bucket.items.push(a);
+          else groups.push({ name, items: [a] });
+        }
+        const order = GROUP_ORDER[category];
+        if (order) {
+          groups.sort((a, b) => {
+            const ia = order.indexOf(a.name);
+            const ib = order.indexOf(b.name);
+            return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib);
+          });
+        }
+        if (groups.length <= 1 && !groups[0]?.name) {
+          return <ArticleList articles={articles} />;
+        }
+        return (
+          <>
+            {groups.map((g, i) => (
+              <div key={g.name || i}>
+                {g.name && (
+                  <h2 className={`text-xl font-bold text-gray-900 mb-4 ${i > 0 ? 'mt-10' : ''}`}>
+                    {GROUP_HEADINGS[g.name] ?? g.name}
+                  </h2>
+                )}
+                <ArticleList articles={g.items} />
+              </div>
+            ))}
+          </>
+        );
+      })()}
     </div>
   );
 }
