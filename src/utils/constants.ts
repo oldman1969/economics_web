@@ -3,7 +3,18 @@ import type { MarketScope } from '@/types';
 export const NAV_ITEMS = [
   { label: '首页', path: '/' },
   {
-    label: '学习',
+    label: 'AI',
+    children: [
+      { label: 'AI 总览', path: '/ai' },
+      { label: '历史脉络', path: '/ai/notes' },
+      { label: '技术解剖', path: '/ai/deep-dives' },
+      { label: 'Agent 工程', path: '/ai/agent' },
+      { label: '参考资料', path: '/ai/references' },
+      { label: 'MATLAB 代码', path: '/ai/code' },
+    ],
+  },
+  {
+    label: '经济',
     children: [
       { label: '认识经济', path: '/economics' },
       { label: '认识公司', path: '/investing/company-essence' },

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   BookOpen, Building2, LineChart, Heart,
   Search, Filter, Sparkles, ShieldCheck, Compass, TrendingUp, ChevronDown,
+  Brain, ArrowRight,
 } from 'lucide-react';
 
 const LEVELS = [
@@ -104,6 +105,26 @@ export default function Home() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* 认识 AI 入口 */}
+      <div className="max-w-2xl mx-auto mb-16">
+        <Link
+          to="/ai"
+          className="block border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-teal-50/50 rounded-2xl px-6 py-5 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Brain size={24} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-xs font-medium text-indigo-700">AI 认知</span>
+              <h2 className="text-lg font-semibold text-gray-900 leading-tight">认识 AI · 知其所以然</h2>
+              <p className="text-sm text-gray-500 mt-0.5">从神经元到大模型、从原理到 Agent 工程，吃透 AI 背后的技术</p>
+            </div>
+            <ArrowRight size={18} className="text-indigo-400 flex-shrink-0" />
+          </div>
+        </Link>
       </div>
 
       {/* 工具入口 */}

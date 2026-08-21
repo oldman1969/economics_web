@@ -10,7 +10,7 @@ export default function Layout() {
       </main>
       <footer className="bg-white border-t border-gray-200 py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-          <p>Economics & Investing — Understand the economy, master investing</p>
+          <p>AI & Economics & Investing — Understand AI, economics, and investing</p>
           <p className="mt-1">数据来源：东方财富 | 内容仅供参考，不构成投资建议</p>
         </div>
       </footer>

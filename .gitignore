@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# know_ai 内容镜像（由 scripts/sync-ai.mjs 从 GitHub 克隆，不纳入版本管理）
+know_ai/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

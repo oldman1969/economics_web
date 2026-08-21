@@ -17,3 +17,36 @@
     @apply hover:shadow-lg hover:-translate-y-1 hover:border-gray-200;
   }
 }
+
+/* ── AI 模块 markdown 渲染（作用域 .markdown，不影响旧页面）── */
+.markdown { color: #4b5563; line-height: 1.75; word-wrap: break-word; }
+.markdown h1 { font-size: 1.875rem; line-height: 1.2; font-weight: 700; color: #111827; margin: 0.5rem 0 1rem; }
+.markdown h2 { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 2rem 0 0.75rem; }
+.markdown h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin: 1.5rem 0 0.5rem; }
+.markdown h4 { font-size: 0.9rem; font-weight: 600; color: #1f2937; margin: 1.25rem 0 0.25rem; }
+.markdown p { margin: 0.75rem 0; }
+.markdown ul { margin: 0.75rem 0; padding-left: 1.25rem; list-style: disc; }
+.markdown ol { margin: 0.75rem 0; padding-left: 1.25rem; list-style: decimal; }
+.markdown li { margin: 0.25rem 0; }
+.markdown li > ul, .markdown li > ol { margin: 0.25rem 0; }
+.markdown blockquote { border-left: 4px solid #bfdbfe; background: #eff6ff; padding: 0.5rem 1rem; margin: 1rem 0; border-radius: 0 0.5rem 0.5rem 0; color: #6b7280; }
+.markdown blockquote p { margin: 0.25rem 0; }
+.markdown a { color: #2563eb; }
+.markdown a:hover { text-decoration: underline; }
+.markdown strong { font-weight: 600; color: #111827; }
+.markdown hr { margin: 2rem 0; border-color: #e5e7eb; }
+.markdown img { max-width: 100%; border-radius: 0.5rem; }
+
+/* 表格 */
+.markdown .md-table-wrap { overflow-x: auto; margin: 1rem 0; }
+.markdown table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.markdown th { background: #f9fafb; text-align: left; font-weight: 600; color: #1f2937; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; }
+.markdown td { padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; vertical-align: top; }
+
+/* 代码块 */
+.markdown pre { background: #f8f8f8; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-size: 0.875rem; line-height: 1.6; }
+.markdown pre code.hljs { background: transparent; padding: 0; color: #24292e; }
+.markdown :not(pre) > code { background: #f3f4f6; color: #dc2626; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.9em; }
+
+/* KaTeX 数学 */
+.markdown .katex-display { overflow-x: auto; overflow-y: hidden; margin: 0.75rem 0; padding: 0.25rem 0; }
